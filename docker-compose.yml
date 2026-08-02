@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: quiz_game_backend
+    ports:
+      - "8081:81"
+    volumes:
+      - ./app:/app
+    environment:
+      - TZ=Asia/Tehran
+    command: uvicorn main:app --host 0.0.0.0 --port 81 --reload
