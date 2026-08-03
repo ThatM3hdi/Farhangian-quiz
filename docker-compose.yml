@@ -8,6 +8,7 @@ services:
       - "8081:81"
     volumes:
       - ./app:/code/app
+      - ./tests:/code/tests
     environment:
       - TZ=Asia/Tehran
     command: uvicorn app.main:app --host 0.0.0.0 --port 81 --reload
