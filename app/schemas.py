@@ -1,24 +1,24 @@
 from pydantic import BaseModel, ConfigDict
 from typing import List
 
+
 # ==========================================
-# 1. User Schemas
+# 1. Student Schemas
 # ==========================================
 
-class UserBase(BaseModel):
-    username: str
+class StudentCreate(BaseModel):
+    """Model for when a student registers in the lobby (they only submit a name)."""
+    name: str
 
-class UserCreate(UserBase):
-    """Model for when a user registers or logs into the game"""
-    pass
 
-class UserOut(UserBase):
-    """Output model for displaying user information"""
+class StudentOut(BaseModel):
+    """Public output model for a student — used in the leaderboard and admin waiting list."""
     id: int
-    total_score: int
+    name: str
+    score: int
 
-# This setting tells Pydantic to read data directly from the database model (SQLAlchemy)
     model_config = ConfigDict(from_attributes=True)
+
 
 # ==========================================
 # 2. Question Schemas
@@ -26,7 +26,9 @@ class UserOut(UserBase):
 
 class QuestionOut(BaseModel):
     """
-    Output model for displaying questions to users during the game.
+    Output model for displaying a question to the client during the game.
+    NOTE: correct_option is intentionally excluded here so it is never sent
+    to the browser — only the server-side model has it.
     """
     id: int
     question_text_1st_part: str
@@ -38,18 +40,56 @@ class QuestionOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 # ==========================================
 # 3. Game & Answer Schemas
 # ==========================================
 
 class AnswerSubmit(BaseModel):
-    """Validation model for when the user clicks on an option"""
-    user_id: int
+    """
+    Validation model for when the student clicks an option.
+
+    IMPORTANT: there is no student/user id field here on purpose. The
+    student's identity must be resolved server-side from the session_token
+    cookie (see lobby/game routers), never trusted from the request body —
+    otherwise any client could submit answers on behalf of another student's id.
+    """
     question_id: int
     selected_option: int
 
+
 class AnswerResultOut(BaseModel):
-    """Output model for when the server returns the result of the user's response"""
+    """Output model returned after an answer is submitted and graded."""
     is_correct: bool
     correct_option: int
     points_earned: int
+
+
+# ==========================================
+# 4. Game State Schemas
+# ==========================================
+
+class GameStatusOut(BaseModel):
+    """Output model for polling the current game status (used by lobby.html and game.html)."""
+    status: str  # one of: "waiting", "playing", "finished"
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+# ==========================================
+# 5. Leaderboard Schemas
+# ==========================================
+
+class LeaderboardOut(BaseModel):
+    """Output model for the leaderboard page: students ordered by score, descending."""
+    students: List[StudentOut]
+
+
+# ==========================================
+# 6. Admin Schemas
+# ==========================================
+
+class AdminLogin(BaseModel):
+    """Validation model for the admin login form (hardcoded credentials checked server-side)."""
+    username: str
+    password: str
