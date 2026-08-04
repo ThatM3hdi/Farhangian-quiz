@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ورود به کوییز کلاسی</title>
+
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/lobby.css">
+  </head>
+
+  <body>
+
+    <div class="app-shell">
+      <!-- ===================== کارت ثبت‌نام / لابی انتظار ===================== -->
+      <main class="lobby-card" id="lobby-card">
+
+        <div class="lobby-content">
+          <header class="lobby-header">
+            <h1 class="app-title">کوییز کلاسی</h1>
+            <p class="subtitle">رقابتی سرگرم‌کننده در دنیای ادب و دانش</p>
+          </header>
+
+          <!-- نمای ثبت‌نام -->
+          <section class="view view--register" data-view="register">
+            <form id="register-form" novalidate>
+              <label for="student-name">نام و نام خانوادگی</label>
+              <input
+                type="text"
+                id="student-name"
+                name="name"
+                autocomplete="off"
+                placeholder="مثلاً: علی رضایی"
+                required
+              >
+              <p class="form-error" id="form-error" role="alert" hidden></p>
+              <button type="submit" class="submit-button" id="submit-button">ورود به بازی</button>
+            </form>
+          </section>
+
+          <!-- نمای انتظار -->
+          <section class="view view--waiting" data-view="waiting" hidden>
+            <p class="welcome-text">
+              خوش آمدی، <span class="student-name" id="student-name-display"></span>
+            </p>
+            <div class="pulse-indicator" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <p class="status-text" id="status-text">منتظر شروع بازی توسط معلم هستیم...</p>
+          </section>
+        </div>
+      </main>
+
+      <!-- ===================== صفحه‌ی شمارش معکوس (بعد از شروع بازی) ===================== -->
+      <section class="countdown-screen" id="countdown-screen" hidden>
+        <div class="countdown-image-wrap" id="countdown-image-wrap">
+          <img
+            src="images/guide-banner.webp"
+            alt="راهنمای شروع بازی"
+            id="guide-image"
+            onerror="this.closest('.countdown-image-wrap').classList.add('image-fallback')"
+          >
+        </div>
+        
+        <!-- این بخش اضافه شد -->
+        <div class="countdown-details">
+          <p class="countdown-caption">بازی به‌زودی شروع می‌شود، آماده باش!</p>
+          <span class="countdown-number" id="countdown-number"></span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="progress-bar-fill"></div>
+        </div>
+        <!-- پایان بخش اضافه‌شده -->
+      </section>
+    </div>
+  <script src="js/lobby.js"></script>
+  </body>
+</html>
