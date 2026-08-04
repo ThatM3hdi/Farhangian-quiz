@@ -42,6 +42,17 @@ class QuestionOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class QuestionWithProgressOut(QuestionOut):
+    """
+    Everything QuestionOut has, plus where this student stands in the quiz
+    (e.g. "سوال ۳ از ۱۵"). Only /next-question returns this — it's the only
+    endpoint that actually knows the student's position, since it's the one
+    that counts their answered questions server-side.
+    """
+    position: int
+    total_questions: int
+
+
 # ==========================================
 # 3. Game & Answer Schemas
 # ==========================================
@@ -75,6 +86,19 @@ class GameStatusOut(BaseModel):
     status: str  # one of: "waiting", "playing", "finished"
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class GameTimeOut(BaseModel):
+    """
+    Output model for the live countdown shown on game.html.
+
+    seconds_remaining is None whenever there's nothing to count down —
+    the game isn't playing yet, or GameSettings.starting_time was never set
+    (e.g. status was changed some other way than /admin/game/start). The
+    frontend treats None as "hide the timer" rather than showing 00:00.
+    """
+    status: str
+    seconds_remaining: Optional[int] = None
 
 
 # ==========================================

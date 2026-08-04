@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>کوییز کلاسی - بازی</title>
   <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="styles/game.css">
@@ -10,6 +10,14 @@
 <body>
 
   <div id="screen-lock" class="screen-lock" hidden></div>
+
+  <div id="timer-badge" class="timer-badge" hidden>
+    <span id="timer-text">--:--</span>
+  </div>
+
+  <div id="progress-badge" class="progress-badge" hidden>
+    <span id="progress-text"></span>
+  </div>
 
   <div class="game-shell">
 
@@ -36,6 +44,13 @@
       <button id="btn-next" class="btn btn-primary">ثبت پاسخ</button>
     </div>
 
+  </div>
+
+  <!-- روی موبایل در حالت عمودی، این بخش به‌جای بازی نمایش داده می‌شود -->
+  <div class="rotate-overlay" id="rotate-overlay">
+    <div class="rotate-icon" aria-hidden="true"></div>
+    <p>برای ادامه‌ی بازی، گوشی را به حالت افقی بچرخان</p>
+    <p class="rotate-subtext">این صفحه برای نمایش افقی طراحی شده است</p>
   </div>
 
   <script src="js/game.js"></script>

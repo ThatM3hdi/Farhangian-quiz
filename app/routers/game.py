@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError
@@ -23,7 +24,7 @@ def _ensure_game_is_playing(db: Session) -> None:
         raise HTTPException(status_code=403, detail="بازی در حال حاضر فعال نیست")
 
 
-@router.get("/next-question", response_model=schemas.QuestionOut)
+@router.get("/next-question", response_model=schemas.QuestionWithProgressOut)
 def get_next_question(
     current_student: models.Student = Depends(get_current_student),
     db: Session = Depends(database.get_db),
@@ -41,6 +42,9 @@ def get_next_question(
     for questions already answered (student_answers' unique constraint would
     reject that resubmission anyway, but resuming correctly is much better UX
     than the student hitting a wall of 409s).
+
+    Also returns this student's position/total_questions so the frontend can
+    show a "سوال X از Y" indicator without a second request.
     """
     _ensure_game_is_playing(db)
 
@@ -50,6 +54,7 @@ def get_next_question(
             models.StudentAnswer.student_id == current_student.id
         )
     ]
+    total_questions = db.query(models.Question).count()
 
     query = db.query(models.Question).order_by(models.Question.id)
     if answered_ids:
@@ -63,7 +68,11 @@ def get_next_question(
         )
         raise HTTPException(status_code=404, detail="finished")
 
-    return next_question
+    return schemas.QuestionWithProgressOut(
+        **schemas.QuestionOut.model_validate(next_question).model_dump(),
+        position=len(answered_ids) + 1,
+        total_questions=total_questions,
+    )
 
 
 @router.get("/question/{question_id}", response_model=schemas.QuestionOut)
@@ -93,6 +102,39 @@ def get_question(
         raise HTTPException(status_code=404, detail="finished")
 
     return question
+
+
+@router.get("/time-remaining", response_model=schemas.GameTimeOut)
+def get_time_remaining(db: Session = Depends(database.get_db)):
+    """
+    Public, read-only view of the game clock — no student login required,
+    same as /api/lobby/status and /api/lobby/settings, since it carries no
+    sensitive data (just a status string and a number of seconds).
+
+    game.js polls this to keep its on-screen countdown synced with the
+    server instead of trusting the browser's own clock, and to notice
+    quickly if the admin stops the game mid-question rather than waiting
+    for the student's next answer submission to find out via a 403.
+    """
+    game_state = db.query(models.GameState).first()
+    settings = db.query(models.GameSettings).first()
+    status = game_state.status if game_state is not None else "waiting"
+
+    seconds_remaining = None
+    if (
+        status == "playing"
+        and settings is not None
+        and settings.starting_time is not None
+    ):
+        starting_time = settings.starting_time
+        # Defensive: SQLite can hand back a naive datetime even though it was
+        # stored as UTC-aware (see models.py / database.py notes on this).
+        if starting_time.tzinfo is None:
+            starting_time = starting_time.replace(tzinfo=timezone.utc)
+        elapsed = (datetime.now(timezone.utc) - starting_time).total_seconds()
+        seconds_remaining = max(0, int(settings.game_time - elapsed))
+
+    return schemas.GameTimeOut(status=status, seconds_remaining=seconds_remaining)
 
 
 @router.post("/answer", response_model=schemas.AnswerResultOut)

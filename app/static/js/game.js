@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var LEADERBOARD_URL = 'leaderboard.html';
   var LOBBY_URL = 'lobby.html';
   var FEEDBACK_DELAY_MS = 2000;
+  var TIME_SYNC_INTERVAL_MS = 15000; // هر ۱۵ ثانیه با سرور همگام‌سازی می‌شود
 
   var options = document.querySelectorAll('.option-item');
   var blank = document.getElementById('blank');
@@ -15,9 +16,28 @@ document.addEventListener("DOMContentLoaded", function () {
   var btnNext = document.getElementById('btn-next');
   var questionSection = document.getElementById('question-section');
   var screenLock = document.getElementById('screen-lock');
+  var timerBadge = document.getElementById('timer-badge');
+  var timerText = document.getElementById('timer-text');
+  var progressBadge = document.getElementById('progress-badge');
+  var progressText = document.getElementById('progress-text');
 
-  var draggedOptionNumber = null; // "1".."4" — همینی که سرور برای ثبت پاسخ می‌خواهد
   var currentQuestionId = null;
+  var secondsRemaining = null;
+  var countdownIntervalId = null;
+
+  // ==========================================================
+  // ۰. کمکی: ترتیب تصادفی گزینه‌ها (ضد حفظ‌کردن جای گزینه‌ی درست)
+  // ==========================================================
+  function shuffledOptionNumbers() {
+    var arr = [1, 2, 3, 4];
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
+    }
+    return arr;
+  }
 
   // ==========================================================
   // ۱. رندر کردن سوال دریافتی از سرور روی صفحه
@@ -36,10 +56,19 @@ document.addEventListener("DOMContentLoaded", function () {
     part2.textContent = question.question_text_2nd_part;
     resetBlank();
 
-    options.forEach(function (optionEl) {
-      var n = optionEl.getAttribute('data-option-number');
-      optionEl.textContent = question['option_' + n];
+    // هر بار گزینه‌ها با ترتیب تصادفی جدید روی همان ۴ جایگاه چیده می‌شوند؛
+    // data-option-number روی هر جایگاه مشخص می‌کند این‌بار کدام گزینه‌ی
+    // واقعی (۱ تا ۴) آنجا نشسته، تا هنگام drop همان عدد به سرور فرستاده شود.
+    var order = shuffledOptionNumbers();
+    options.forEach(function (optionEl, index) {
+      var optionNumber = order[index];
+      optionEl.setAttribute('data-option-number', String(optionNumber));
+      optionEl.textContent = question['option_' + optionNumber];
     });
+
+    progressText.textContent =
+      'سوال ' + question.position + ' از ' + question.total_questions;
+    progressBadge.hidden = false;
 
     questionSection.classList.remove('correct-answer', 'wrong-answer');
   }
@@ -51,23 +80,24 @@ document.addEventListener("DOMContentLoaded", function () {
   // سرور می‌پرسد. یعنی با رفرش صفحه هم دقیقاً از همان‌جا که مانده ادامه
   // پیدا می‌کند، چون موقعیت واقعی در جدول student_answers نگه داشته می‌شود
   // نه در حافظه‌ی مرورگر.
+  function redirectByStatus(status) {
+    window.location.href = status === 'finished' ? LEADERBOARD_URL : LOBBY_URL;
+  }
+
   function loadNextQuestion() {
     screenLock.hidden = false;
 
     fetch('/api/game/next-question', { credentials: 'same-origin' })
       .then(function (response) {
         if (response.status === 401) {
-          // کوکی معتبر نیست — کاربر باید دوباره از لابی وارد شود
           window.location.href = LOBBY_URL;
           return null;
         }
         if (response.status === 403) {
-          // بازی الان "playing" نیست؛ ببینیم پایان یافته یا هنوز شروع نشده
           return fetch('/api/lobby/status', { credentials: 'same-origin' })
             .then(function (r) { return r.ok ? r.json() : { status: 'waiting' }; })
             .then(function (state) {
-              window.location.href =
-                state.status === 'finished' ? LEADERBOARD_URL : LOBBY_URL;
+              redirectByStatus(state.status);
               return null;
             });
         }
@@ -123,18 +153,70 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ==========================================================
-  // ۴. تنظیمات Drag & Drop
+  // ۴. شمارنده معکوس زمان بازی
+  // ==========================================================
+  function formatTime(totalSeconds) {
+    var clamped = Math.max(0, totalSeconds);
+    var minutes = Math.floor(clamped / 60);
+    var seconds = clamped % 60;
+    return (
+      String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0')
+    );
+  }
+
+  function updateTimerDisplay() {
+    timerText.textContent = formatTime(secondsRemaining);
+    timerBadge.classList.toggle('timer-warning', secondsRemaining <= 30);
+    timerBadge.hidden = false;
+  }
+
+  function startLocalCountdown(seconds) {
+    secondsRemaining = seconds;
+    updateTimerDisplay();
+
+    if (countdownIntervalId) clearInterval(countdownIntervalId);
+    countdownIntervalId = setInterval(function () {
+      secondsRemaining = Math.max(0, secondsRemaining - 1);
+      updateTimerDisplay();
+      if (secondsRemaining === 0) {
+        clearInterval(countdownIntervalId);
+      }
+    }, 1000);
+  }
+
+  function syncTimeRemaining() {
+    fetch('/api/game/time-remaining', { credentials: 'same-origin' })
+      .then(function (response) { return response.ok ? response.json() : null; })
+      .then(function (data) {
+        if (!data) return;
+        if (data.status !== 'playing') {
+          if (countdownIntervalId) clearInterval(countdownIntervalId);
+          redirectByStatus(data.status);
+          return;
+        }
+        if (typeof data.seconds_remaining === 'number') {
+          startLocalCountdown(data.seconds_remaining);
+        } else {
+          timerBadge.hidden = true; // زمان‌بندی برای این بازی تعریف نشده
+        }
+      })
+      .catch(function (err) {
+        console.error('خطا در همگام‌سازی شمارنده زمان:', err);
+      });
+  }
+
+  // ==========================================================
+  // ۵. تنظیمات Drag & Drop
   // ==========================================================
   options.forEach(function (option) {
     option.addEventListener('dragstart', function (e) {
-      draggedOptionNumber = e.target.getAttribute('data-option-number');
-      e.dataTransfer.setData('text/plain', draggedOptionNumber);
+      var optionNumber = e.target.getAttribute('data-option-number');
+      e.dataTransfer.setData('text/plain', optionNumber);
       setTimeout(function () { e.target.classList.add('dragging'); }, 0);
     });
 
     option.addEventListener('dragend', function (e) {
       e.target.classList.remove('dragging');
-      draggedOptionNumber = null;
     });
   });
 
@@ -164,14 +246,14 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // ==========================================================
-  // ۵. دکمه «پاک کردن»
+  // ۶. دکمه «پاک کردن»
   // ==========================================================
   btnClear.addEventListener('click', function () {
     resetBlank();
   });
 
   // ==========================================================
-  // ۶. دکمه «ثبت پاسخ»
+  // ۷. دکمه «ثبت پاسخ»
   // ==========================================================
   btnNext.addEventListener('click', function () {
     var isFilled = blank.getAttribute('data-filled') === 'true';
@@ -194,12 +276,13 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
 
-        questionSection.classList.add(
-          result.is_correct ? 'correct-answer' : 'wrong-answer'
-        );
+        // فلش تمام‌صفحه: کلاس روی خود screen-lock می‌رود چون همین
+        // المان از قبل کل ویوپورت را می‌پوشاند و در همین ۲ ثانیه قفل
+        // است، پس همان یک overlay هم رنگ می‌شود هم کلیک‌ها را می‌بندد.
+        screenLock.classList.add(result.is_correct ? 'correct-answer' : 'wrong-answer');
 
         setTimeout(function () {
-          questionSection.classList.remove('correct-answer', 'wrong-answer');
+          screenLock.classList.remove('correct-answer', 'wrong-answer');
           loadNextQuestion();
         }, FEEDBACK_DELAY_MS);
       })
@@ -211,7 +294,9 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // ==========================================================
-  // شروع: اولین سوال را بگیر
+  // شروع: اولین سوال + شمارنده زمان
   // ==========================================================
   loadNextQuestion();
+  syncTimeRemaining();
+  setInterval(syncTimeRemaining, TIME_SYNC_INTERVAL_MS);
 });
