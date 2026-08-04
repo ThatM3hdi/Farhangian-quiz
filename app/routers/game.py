@@ -23,6 +23,49 @@ def _ensure_game_is_playing(db: Session) -> None:
         raise HTTPException(status_code=403, detail="بازی در حال حاضر فعال نیست")
 
 
+@router.get("/next-question", response_model=schemas.QuestionOut)
+def get_next_question(
+    current_student: models.Student = Depends(get_current_student),
+    db: Session = Depends(database.get_db),
+):
+    """
+    Returns the first question the student has NOT answered yet, resolved
+    entirely from student_answers on the server — not from a question number
+    the client tracks in JS memory or the URL.
+
+    This is what makes a refresh safe: game.js never needs to remember "we're
+    on question 7", it just asks the server "what's next for me?" every time
+    it needs a question (on load, and after each answer). Even if the tab is
+    closed and reopened five minutes later, the student resumes exactly where
+    they left off instead of restarting from question 1 and re-earning points
+    for questions already answered (student_answers' unique constraint would
+    reject that resubmission anyway, but resuming correctly is much better UX
+    than the student hitting a wall of 409s).
+    """
+    _ensure_game_is_playing(db)
+
+    answered_ids = [
+        row.question_id
+        for row in db.query(models.StudentAnswer.question_id).filter(
+            models.StudentAnswer.student_id == current_student.id
+        )
+    ]
+
+    query = db.query(models.Question).order_by(models.Question.id)
+    if answered_ids:
+        query = query.filter(~models.Question.id.in_(answered_ids))
+    next_question = query.first()
+
+    if next_question is None:
+        logger.info(
+            "Student id=%s has answered every question — quiz finished",
+            current_student.id,
+        )
+        raise HTTPException(status_code=404, detail="finished")
+
+    return next_question
+
+
 @router.get("/question/{question_id}", response_model=schemas.QuestionOut)
 def get_question(
     question_id: int,
@@ -30,7 +73,9 @@ def get_question(
     db: Session = Depends(database.get_db),
 ):
     """Returns a question and its four options. correct_option is never included
-    (schemas.QuestionOut doesn't have that field, so there's nothing to leak)."""
+    (schemas.QuestionOut doesn't have that field, so there's nothing to leak).
+    Kept for direct/manual lookups (tests, admin debugging); game.js itself
+    should use /next-question so it never has to track position client-side."""
     _ensure_game_is_playing(db)
 
     question = (

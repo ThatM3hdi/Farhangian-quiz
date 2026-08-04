@@ -12,11 +12,11 @@
   <div id="screen-lock" class="screen-lock" hidden></div>
 
   <div class="game-shell">
-    
+
     <div class="question-section" id="question-section">
       <div class="question-container">
         <p id="question-text" class="question-text">
-          بنی آدم اعضای یکدیگرند <br> که در آفرینش ز یک <span id="blank" class="blank" data-default="...">...</span> اند
+          <span id="part-1"></span><span id="blank" class="blank" data-default="...">...</span><span id="part-2"></span>
         </p>
       </div>
     </div>
@@ -24,16 +24,16 @@
     <div class="options-section">
       <h2 class="options-title">گزینه را بکشید و رها کنید</h2>
       <div class="options-container" id="options-container">
-        <div class="option-item float-1" draggable="true" data-value="پیکر">پیکر</div>
-        <div class="option-item float-2" draggable="true" data-value="گوهر">گوهر</div>
-        <div class="option-item float-3" draggable="true" data-value="مادر">مادر</div>
-        <div class="option-item float-4" draggable="true" data-value="اختر">اختر</div>
+        <div class="option-item float-1" draggable="true" data-option-number="1"></div>
+        <div class="option-item float-2" draggable="true" data-option-number="2"></div>
+        <div class="option-item float-3" draggable="true" data-option-number="3"></div>
+        <div class="option-item float-4" draggable="true" data-option-number="4"></div>
       </div>
     </div>
 
     <div class="action-buttons">
       <button id="btn-clear" class="btn btn-secondary">پاک کردن</button>
-      <button id="btn-next" class="btn btn-primary">سوال بعدی</button>
+      <button id="btn-next" class="btn btn-primary">ثبت پاسخ</button>
     </div>
 
   </div>

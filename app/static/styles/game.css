@@ -110,6 +110,7 @@ body {
   align-items: center;
   padding-top: 100px;
   position: relative;
+  overflow: scroll;
 }
 
 .options-title {
