@@ -12,7 +12,7 @@
   <body>
 
     <div class="app-shell">
-      <!-- ===================== کارت ثبت‌نام / لابی انتظار ===================== -->
+      <!-- ===================== sign in ===================== -->
       <main class="lobby-card" id="lobby-card">
 
         <div class="lobby-content">
@@ -21,7 +21,7 @@
             <p class="subtitle">رقابتی سرگرم‌کننده در دنیای ادب و دانش</p>
           </header>
 
-          <!-- نمای ثبت‌نام -->
+
           <section class="view view--register" data-view="register">
             <form id="register-form" novalidate>
               <label for="student-name">نام و نام خانوادگی</label>
@@ -38,7 +38,7 @@
             </form>
           </section>
 
-          <!-- نمای انتظار -->
+
           <section class="view view--waiting" data-view="waiting" hidden>
             <p class="welcome-text">
               خوش آمدی، <span class="student-name" id="student-name-display"></span>
@@ -46,12 +46,12 @@
             <div class="pulse-indicator" aria-hidden="true">
               <span></span><span></span><span></span>
             </div>
-            <p class="status-text" id="status-text">منتظر شروع بازی توسط معلم هستیم...</p>
+            <p class="status-text" id="status-text">منتظر شروع بازی توسط استاد هستیم...</p>
           </section>
         </div>
       </main>
 
-      <!-- ===================== صفحه‌ی شمارش معکوس (بعد از شروع بازی) ===================== -->
+      <!-- ===================== count down screen ===================== -->
       <section class="countdown-screen" id="countdown-screen" hidden>
         <div class="countdown-image-wrap" id="countdown-image-wrap">
           <img
@@ -62,7 +62,7 @@
           >
         </div>
         
-        <!-- این بخش اضافه شد -->
+
         <div class="countdown-details">
           <p class="countdown-caption">بازی به‌زودی شروع می‌شود، آماده باش!</p>
           <span class="countdown-number" id="countdown-number"></span>
@@ -70,7 +70,7 @@
         <div class="progress-bar-container">
           <div class="progress-bar-fill" id="progress-bar-fill"></div>
         </div>
-        <!-- پایان بخش اضافه‌شده -->
+
       </section>
     </div>
   <script src="js/lobby.js"></script>
