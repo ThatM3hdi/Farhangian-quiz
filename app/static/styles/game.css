@@ -1,0 +1,207 @@
+/* ==========================================================================
+   Game Layout & Components
+   ========================================================================== */
+
+/* Screen Lock Overlay */
+body {
+  background-image: url("../images/empty-class-room.webp");
+}
+
+.screen-lock {
+  position: absolute;
+  inset: 0;
+  z-index: 1000;
+  cursor: not-allowed;
+}
+
+.game-shell {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* --------------------------------------------------------------------
+   Question Section (70%)
+   -------------------------------------------------------------------- */
+   .game-shell .question-section {
+  width: 70%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("../images/black-board.webp");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Feedback states (Green / Red overlay) */
+.game-shell .question-section.correct-answer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(76, 175, 80, 0.25);
+  box-shadow: inset 0 0 80px rgba(76, 175, 80, 0.6);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.game-shell .question-section.wrong-answer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(244, 67, 54, 0.25);
+  box-shadow: inset 0 0 80px rgba(244, 67, 54, 0.6);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.game-shell .question-container {
+  position: relative;
+  z-index: 2;
+  padding: 50px 80px;
+  text-align: center;
+  max-width: 85%;
+}
+
+.game-shell .question-text {
+  font-size: 36px;
+  line-height: 2.2;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+/* The Drop Target (Blank) */
+.blank {
+  display: inline-block;
+  min-width: 90px;
+  padding: 0 15px;
+  color: var(--accent-gold);
+  border-bottom: 3px dashed var(--accent-gold);
+  margin: 0 10px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.blank.drag-over {
+  background-color: rgba(255, 215, 0, 0.15);
+  border-radius: 8px;
+}
+
+.blank.filled {
+  border-bottom: 3px solid var(--accent-gold);
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+/* --------------------------------------------------------------------
+   Options Section (30%)
+   -------------------------------------------------------------------- */
+.options-section {
+  width: 30%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 100px;
+  position: relative;
+}
+
+.options-title {
+  font-size: 20px;
+  color: var(--text-muted);
+  margin-bottom: 50px;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 70%;
+}
+
+/* Floating Options */
+.option-item {
+  background-color: var(--bg-item);
+  border: 1px solid var(--accent-purple);
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  font-size: 24px;
+  text-align: center;
+  cursor: grab;
+  box-shadow: 0 5px 15px var(--accent-purple-glow);
+  user-select: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.option-item:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+}
+
+/* Floating Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+.float-1 { animation: float 3s ease-in-out infinite; }
+.float-2 { animation: float 3.5s ease-in-out infinite 0.5s; }
+.float-3 { animation: float 3.2s ease-in-out infinite 1s; }
+.float-4 { animation: float 3.8s ease-in-out infinite 0.2s; }
+
+.option-item.dragging {
+  opacity: 0.4;
+  animation: none;
+}
+
+/* --------------------------------------------------------------------
+   Action Buttons (Absolute Bottom)
+   -------------------------------------------------------------------- */
+.action-buttons {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 10;
+}
+
+.btn {
+  padding: 16px 40px;
+  font-size: 20px;
+  font-weight: 700;
+  border-radius: var(--radius-lg);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  color: #fff;
+  box-shadow: 0 6px 20px var(--accent-purple-glow);
+}
+
+.btn-secondary {
+  background: var(--bg-item);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background: var(--border-color);
+}

@@ -1,5 +1,6 @@
-from pydantic import BaseModel, ConfigDict
-from typing import List
+from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # ==========================================
@@ -93,3 +94,28 @@ class AdminLogin(BaseModel):
     """Validation model for the admin login form (hardcoded credentials checked server-side)."""
     username: str
     password: str
+
+
+class StudentListOut(BaseModel):
+    """Output for admin views that list registered students (e.g. the lobby waiting list)."""
+    count: int
+    students: List[StudentOut]
+
+
+class GameSettingsOut(BaseModel):
+    """Output model for the current game timing settings, shown in the admin panel."""
+    game_time: int
+    guid_time: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class GameSettingsUpdate(BaseModel):
+    """
+    Input model for the admin updating game timing settings. Both fields are
+    optional so the teacher can change just one without resending the other.
+    Values must be positive (enforced here, so an invalid request never even
+    reaches the endpoint logic).
+    """
+    game_time: Optional[int] = Field(default=None, gt=0, description="مدت زمان کل بازی (ثانیه)")
+    guid_time: Optional[int] = Field(default=None, gt=0, description="مدت زمان نمایش راهنما (ثانیه)")

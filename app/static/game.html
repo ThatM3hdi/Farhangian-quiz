@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>کوییز کلاسی - بازی</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="styles/game.css">
+</head>
+<body>
+
+  <div id="screen-lock" class="screen-lock" hidden></div>
+
+  <div class="game-shell">
+    
+    <div class="question-section" id="question-section">
+      <div class="question-container">
+        <p id="question-text" class="question-text">
+          بنی آدم اعضای یکدیگرند <br> که در آفرینش ز یک <span id="blank" class="blank" data-default="...">...</span> اند
+        </p>
+      </div>
+    </div>
+
+    <div class="options-section">
+      <h2 class="options-title">گزینه را بکشید و رها کنید</h2>
+      <div class="options-container" id="options-container">
+        <div class="option-item float-1" draggable="true" data-value="پیکر">پیکر</div>
+        <div class="option-item float-2" draggable="true" data-value="گوهر">گوهر</div>
+        <div class="option-item float-3" draggable="true" data-value="مادر">مادر</div>
+        <div class="option-item float-4" draggable="true" data-value="اختر">اختر</div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button id="btn-clear" class="btn btn-secondary">پاک کردن</button>
+      <button id="btn-next" class="btn btn-primary">سوال بعدی</button>
+    </div>
+
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+/* ==========================================================================
+   Design System & Base Styles
+   ========================================================================== */
+
+   @font-face {
+    font-family: 'Vazirmatn';
+    src: url('../fonts/Vazirmatn-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+  }
+  
+  :root {
+    /* Color Palette */
+    --bg-main: #1a1a27;
+    --bg-card: rgba(26, 26, 39, 0.9);
+    --bg-item: #212132;
+    --border-color: #3c3c54;
+    
+    --text-main: #ffffff;
+    --text-muted: #a0a0c0;
+    
+    --accent-purple: #764ba2;
+    --accent-purple-glow: rgba(118, 75, 162, 0.25);
+    --accent-gold: #ffd700;
+    --danger-color: #ff5252;
+  
+    /* Borders & Radii */
+    --radius-xl: 50px;
+    --radius-lg: 20px;
+    --radius-md: 12px;
+  
+    /* Typography */
+    --font-main: 'Vazirmatn', sans-serif;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-main);
+  }
+  
+  /* رعایت ویژگی hidden در تمام مرورگرها و جلوگیری از اورراید شدن توسط display: flex / block */
+  [hidden] {
+    display: none !important;
+  }
+  
+  html, body {
+    min-height: 100vh;
+    width: 100%;
+  }
+  
+  body {
+    direction: rtl;
+    background-color: var(--bg-main);
+    background-image: url("../images/leaderbord-bg.webp");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: var(--text-main);
+    font-weight: 700;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    outline: none;
+  }
+  
+  input {
+    font-family: inherit;
+    outline: none;
+  }
+  
+  :focus-visible {
+    outline: 2px solid var(--accent-purple);
+    outline-offset: 2px;
+  }
+  
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
