@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // آدرس صفحه لیدربرد. این فایل هنوز طبق مستندات پروژه ساخته نشده؛
   // هر وقت ساختی، در صورت نیاز همین یک خط را عوض کن.
-  var LEADERBOARD_URL = 'leaderboard.html';
+  var LEADERBOARD_URL = '/';    
   var LOBBY_URL = 'lobby.html';
   var FEEDBACK_DELAY_MS = 2000;
   var TIME_SYNC_INTERVAL_MS = 15000; // هر ۱۵ ثانیه با سرور همگام‌سازی می‌شود
