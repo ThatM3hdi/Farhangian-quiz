@@ -268,3 +268,49 @@
     box-shadow: 0 0 15px var(--accent-purple);
     transition: width 1s linear; 
   }
+
+
+/* ==========================================================================
+  Mobile
+  ========================================================================== */
+  @media (max-width: 480px) {
+  .app-shell {
+    padding: 12px;
+  }
+
+  .lobby-card {
+    border-radius: var(--radius-lg);
+  }
+
+  .lobby-content {
+    padding: 28px 20px;
+    gap: 18px;
+  }
+
+  .app-title {
+    font-size: 26px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  #register-form input[type='text'] {
+    font-size: 16px;
+    padding: 12px 14px;
+  }
+
+  .countdown-image-wrap {
+    border-radius: var(--radius-lg);
+  }
+
+  .countdown-caption {
+    font-size: 15px;
+    padding: 0 8px;
+  }
+
+  .countdown-number {
+    font-size: 18px;
+  }
+
+}

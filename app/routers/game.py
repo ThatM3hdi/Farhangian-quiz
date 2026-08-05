@@ -127,15 +127,17 @@ def get_time_remaining(db: Session = Depends(database.get_db)):
         and settings.starting_time is not None
     ):
         starting_time = settings.starting_time
-        # Defensive: SQLite can hand back a naive datetime even though it was
-        # stored as UTC-aware (see models.py / database.py notes on this).
         if starting_time.tzinfo is None:
             starting_time = starting_time.replace(tzinfo=timezone.utc)
         elapsed = (datetime.now(timezone.utc) - starting_time).total_seconds()
         seconds_remaining = max(0, int(settings.game_time - elapsed))
 
-    return schemas.GameTimeOut(status=status, seconds_remaining=seconds_remaining)
+        if seconds_remaining == 0:
+            game_state.status = "finished"
+            db.commit()
+            status = "finished"
 
+    return schemas.GameTimeOut(status=status, seconds_remaining=seconds_remaining)
 
 @router.post("/answer", response_model=schemas.AnswerResultOut)
 def submit_answer(

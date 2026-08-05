@@ -52,8 +52,7 @@ body {
   border: 2px solid var(--accent-gold);
   border-radius: var(--radius-lg);
   padding: 8px 26px;
-  font-size: 22px;
-  letter-spacing: 1px;
+  font-size: clamp(14px, 3.7vmin, 22px);  letter-spacing: 1px;
   font-variant-numeric: tabular-nums;
   color: var(--accent-gold);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
@@ -79,7 +78,7 @@ body {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 7px 18px;
-  font-size: 15px;
+  font-size: clamp(11px, 2.8vmin, 15px);
   color: var(--text-muted);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 }
@@ -109,8 +108,8 @@ body {
 }
 
 .game-shell .question-text {
-  font-size: 36px;
-  line-height: 2.2;
+  font-size: clamp(16px, 4.6vmin, 36px);
+  line-height: 1.6;
   color: var(--text-main);
   font-weight: 700;
 }
@@ -151,8 +150,8 @@ body {
 }
 
 .options-title {
-  font-size: 20px;
-  color: var(--text-muted);
+  font-size: clamp(12px, 3vmin, 20px);
+  color: #000;
   margin-bottom: 50px;
 }
 
@@ -169,12 +168,13 @@ body {
   border: 1px solid var(--accent-purple);
   padding: 16px 20px;
   border-radius: var(--radius-md);
-  font-size: 24px;
+  font-size: clamp(13px, 3.5vmin, 24px);
   text-align: center;
   cursor: grab;
   box-shadow: 0 5px 15px var(--accent-purple-glow);
   user-select: none;
   transition: transform 0.2s, box-shadow 0.2s;
+  touch-action: none;
 }
 
 .option-item:active {
@@ -199,6 +199,15 @@ body {
   animation: none;
 }
 
+.option-ghost {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  animation: none !important;
+  opacity: 0.95;
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+}
 /* --------------------------------------------------------------------
    Action Buttons (Absolute Bottom)
    -------------------------------------------------------------------- */
@@ -214,7 +223,7 @@ body {
 
 .btn {
   padding: 16px 40px;
-  font-size: 20px;
+  font-size: clamp(13px, 3.5vmin, 20px);
   font-weight: 700;
   border-radius: var(--radius-lg);
   transition: transform 160ms ease, box-shadow 160ms ease;
@@ -325,11 +334,6 @@ body {
     max-width: 94%;
   }
 
-  .game-shell .question-text {
-    font-size: 20px;
-    line-height: 1.7;
-  }
-
   .blank {
     min-width: 60px;
     padding: 0 10px;
@@ -338,11 +342,6 @@ body {
 
   .options-section {
     padding-top: 16px;
-  }
-
-  .options-title {
-    font-size: 13px;
-    margin-bottom: 14px;
   }
 
   .options-container {
@@ -408,6 +407,5 @@ body {
 
   .btn {
     padding: 8px 18px;
-    font-size: 13px;
   }
 }

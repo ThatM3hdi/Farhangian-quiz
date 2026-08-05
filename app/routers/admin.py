@@ -1,3 +1,4 @@
+import os
 import hashlib
 import io
 import logging
@@ -17,9 +18,14 @@ from app import database, models, schemas
 router = APIRouter()
 logger = logging.getLogger("admin")
 
-# TODO: move these to environment variables before running with a real class.
-ADMIN_USERNAME = "teacher"
-ADMIN_PASSWORD = "quiz-admin-2026"
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin_username")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin_password")
+
+if ADMIN_PASSWORD == "admin_password":
+    logger.warning(
+        "ADMIN_PASSWORD is not set — running with the default password. "
+        "Set ADMIN_USERNAME and ADMIN_PASSWORD env vars before running with a real class."
+    )
 
 ADMIN_COOKIE_NAME = "admin_token"
 ADMIN_COOKIE_MAX_AGE = 60 * 60 * 24  # 24 hours

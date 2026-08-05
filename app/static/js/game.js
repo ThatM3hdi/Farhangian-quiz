@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // هر وقت ساختی، در صورت نیاز همین یک خط را عوض کن.
   var LEADERBOARD_URL = '/';    
   var LOBBY_URL = 'lobby.html';
-  var FEEDBACK_DELAY_MS = 2000;
+  var FEEDBACK_DELAY_MS = 500;
   var TIME_SYNC_INTERVAL_MS = 15000; // هر ۱۵ ثانیه با سرور همگام‌سازی می‌شود
 
   var options = document.querySelectorAll('.option-item');
@@ -180,6 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
       updateTimerDisplay();
       if (secondsRemaining === 0) {
         clearInterval(countdownIntervalId);
+        syncTimeRemaining();
       }
     }, 1000);
   }
@@ -205,47 +206,78 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  // ==========================================================
-  // ۵. تنظیمات Drag & Drop
-  // ==========================================================
-  options.forEach(function (option) {
-    option.addEventListener('dragstart', function (e) {
-      var optionNumber = e.target.getAttribute('data-option-number');
-      e.dataTransfer.setData('text/plain', optionNumber);
-      setTimeout(function () { e.target.classList.add('dragging'); }, 0);
-    });
+// ==========================================================
+// ۵. تنظیمات Drag & Drop (Pointer Events)
+// ==========================================================
+var activeDrag = null; // { optionEl, ghostEl, offsetX, offsetY }
 
-    option.addEventListener('dragend', function (e) {
-      e.target.classList.remove('dragging');
-    });
-  });
+function createGhost(optionEl) {
+  var rect = optionEl.getBoundingClientRect();
+  var ghost = optionEl.cloneNode(true);
+  ghost.classList.remove('dragging');
+  ghost.classList.add('option-ghost');
+  ghost.style.position = 'fixed';
+  ghost.style.left = rect.left + 'px';
+  ghost.style.top = rect.top + 'px';
+  ghost.style.width = rect.width + 'px';
+  ghost.style.height = rect.height + 'px';
+  ghost.style.margin = '0';
+  document.body.appendChild(ghost);
+  return ghost;
+}
 
-  blank.addEventListener('dragover', function (e) {
-    e.preventDefault();
-    blank.classList.add('drag-over');
-  });
+function isOverBlank(clientX, clientY) {
+  var rect = blank.getBoundingClientRect();
+  return (
+    clientX >= rect.left && clientX <= rect.right &&
+    clientY >= rect.top && clientY <= rect.bottom
+  );
+}
 
-  blank.addEventListener('dragleave', function () {
-    blank.classList.remove('drag-over');
-  });
+function endDrag(option, e) {
+  if (!activeDrag || activeDrag.optionEl !== option) return;
 
-  blank.addEventListener('drop', function (e) {
-    e.preventDefault();
-    blank.classList.remove('drag-over');
+  blank.classList.remove('drag-over');
+  activeDrag.ghostEl.remove();
+  option.classList.remove('dragging');
 
-    var optionNumber = e.dataTransfer.getData('text/plain');
-    if (!optionNumber) return;
-
-    var sourceOption = document.querySelector(
-      '.option-item[data-option-number="' + optionNumber + '"]'
-    );
-    blank.textContent = sourceOption ? sourceOption.textContent : '';
+  if (isOverBlank(e.clientX, e.clientY)) {
+    var optionNumber = option.getAttribute('data-option-number');
+    blank.textContent = option.textContent;
     blank.classList.add('filled');
     blank.setAttribute('data-filled', 'true');
     blank.setAttribute('data-selected-option', optionNumber);
+  }
+
+  activeDrag = null;
+}
+
+options.forEach(function (option) {
+  option.addEventListener('pointerdown', function (e) {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    e.preventDefault();
+
+    var rect = option.getBoundingClientRect();
+    activeDrag = {
+      optionEl: option,
+      ghostEl: createGhost(option),
+      offsetX: e.clientX - rect.left,
+      offsetY: e.clientY - rect.top,
+    };
+    option.classList.add('dragging');
+    option.setPointerCapture(e.pointerId);
   });
 
-  // ==========================================================
+  option.addEventListener('pointermove', function (e) {
+    if (!activeDrag || activeDrag.optionEl !== option) return;
+    activeDrag.ghostEl.style.left = (e.clientX - activeDrag.offsetX) + 'px';
+    activeDrag.ghostEl.style.top = (e.clientY - activeDrag.offsetY) + 'px';
+    blank.classList.toggle('drag-over', isOverBlank(e.clientX, e.clientY));
+  });
+
+  option.addEventListener('pointerup', function (e) { endDrag(option, e); });
+  option.addEventListener('pointercancel', function (e) { endDrag(option, e); });
+});  // ==========================================================
   // ۶. دکمه «پاک کردن»
   // ==========================================================
   btnClear.addEventListener('click', function () {

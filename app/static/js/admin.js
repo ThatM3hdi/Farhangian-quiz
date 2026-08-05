@@ -11,6 +11,7 @@ let gameStatus = 'waiting'; // 'waiting', 'playing', 'finished'
 let pollInterval = null;
 let timerInterval = null;
 let remainingSeconds = null;
+let registeredStudentCount = 0;
 
 // ==========================================
 // 2. DOM REFS
@@ -217,8 +218,7 @@ function renderMonitorTable(students) {
 
 function updateStats(students) {
     const total = students.length;
-    // فعلاً همه در انتظارند، چون اطلاعات بازی رو از جای دیگه نمی‌گیریم
-    // ولی می‌تونیم از students با وضعیت تخمینی استفاده کنیم
+    registeredStudentCount = total;
     statsElements.total.textContent = total;
     statsElements.playing.textContent = '?';
     statsElements.finished.textContent = '?';
@@ -285,12 +285,9 @@ function updateTimerText(seconds) {
 }
 
 function updateButtonsByStatus(status) {
-    // فعال/غیرفعال کردن دکمه‌ها بر اساس وضعیت
     btnStart.disabled = (status === 'playing' || status === 'finished');
     btnStop.disabled = (status === 'waiting' || status === 'finished');
-    // Reset همیشه فعاله
-    // Excel فقط زمانی که بازی تمام شده یا حداقل یک دانش‌آموز ثبت‌نام کرده باشه
-    // ولی فعلاً باگ نیست
+    btnExcel.disabled = !(status === 'finished' || registeredStudentCount > 0);
 }
 
 // ==========================================
