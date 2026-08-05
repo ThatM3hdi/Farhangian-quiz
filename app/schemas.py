@@ -105,9 +105,25 @@ class GameTimeOut(BaseModel):
 # 5. Leaderboard Schemas
 # ==========================================
 
+class LeaderboardEntryOut(BaseModel):
+    """
+    One row of the leaderboard. Separate from StudentOut because the
+    leaderboard is the only place "accuracy" is shown, and computing it
+    needs context (how many questions this student has actually answered
+    so far) that other views like the admin waiting list don't need.
+    """
+    id: int
+    name: str
+    score: int
+    answered_count: int
+    accuracy: Optional[int] = None  # percentage, 0-100; None until they've answered at least one question
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class LeaderboardOut(BaseModel):
     """Output model for the leaderboard page: students ordered by score, descending."""
-    students: List[StudentOut]
+    students: List[LeaderboardEntryOut]
 
 
 # ==========================================

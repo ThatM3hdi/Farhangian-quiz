@@ -1,0 +1,192 @@
+/* init, font*/
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Vazirmatn';
+}
+
+@font-face {
+    font-family: Vazirmatn;
+    src: url(../fonts/Vazirmatn-VariableFont_wght.ttf);
+}
+
+body{
+    display: flex;
+    flex-direction: row;
+    direction:rtl;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    background-color: #1a1a27;
+    color: #fff;
+    font-weight: 700;
+    height: 100vh;
+    background-image: url("../images/leaderbord-bg.webp");
+    background-size: cover;
+}
+
+.addr {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+    max-width: 30%;
+    height: 90vh;
+    max-height: 90vh;
+    background-color: rgba(26, 26, 39, 0.9);
+    border-radius: 50px;
+    gap: 25px;
+}
+
+.addr p {
+    font-size: 26px;
+}
+
+.addr #qrcode {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.leaderboaed{
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+    align-items: center;
+    width: 60%;
+    max-width: 60%;
+    height: 90vh;
+    max-height: 90vh;
+    background-color: rgb(26, 26, 39, 0.9);
+    border-radius: 50px;
+}
+
+.leaderboaed h1{
+    padding: 20px;
+    font-size: 32px;
+}
+
+.leaderboaed .leaderboard-wrapper {
+    width: 90%;
+    height: 80%;
+    overflow: scroll;    
+}
+
+.leaderboaed .leaderboard-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.leaderboaed .leaderboard-table th {
+    font-size: 18px;
+    padding: 0 25px 5px 25px;
+}
+
+.leaderboaed .leaderboard-table th.col-name {
+    text-align: right;
+}
+
+.leaderboard-table th.col-rank,
+.leaderboard-table th.col-accuracy {
+    text-align: center;
+}
+
+.leaderboard-table tbody tr {
+    background-color: #212132;
+    box-shadow: 0 0 15px rgba(118, 75, 162, 0.2);
+}
+
+.leaderboard-table td {
+    padding: 12px 12px;
+    border-top: 1px solid #3c3c54;
+    border-bottom: 1px solid #3c3c54;
+}
+
+.leaderboard-table td:first-child {
+    border-right: 1px solid #3c3c54;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.leaderboard-table td:last-child {
+    border-left: 1px solid #3c3c54;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.leaderboard-table td.col-name {
+    text-align: right;
+    font-size: 18px;
+}
+
+.leaderboard-table td.col-rank,
+.leaderboard-table td.col-accuracy {
+    text-align: center;
+    font-size: 20px;
+}
+
+/* حالت‌های بارگذاری / خالی بودن جدول / قطع ارتباط */
+.leaderboard-table .status-row td {
+    text-align: center;
+    font-weight: 400;
+    font-size: 16px;
+    color: #a0a0c0;
+    padding: 22px 12px;
+}
+
+/* RANKS */
+.leaderboard-table td.col-rank {
+    position: relative;
+}
+
+.leaderboard-table tr.gold-medal td.col-name{
+    text-shadow: 0px 0px 20px #ffd700;
+}
+
+.leaderboard-table tr.gold-medal td.col-rank {
+    color: #ffd700;
+}
+.leaderboard-table tr.gold-medal td.col-rank::before {
+    content: "🥇";
+    margin-left: 8px;
+}
+
+.leaderboard-table tr.silver-medal td.col-name{
+    text-shadow: 0px 0px 20px #c0c0c0;
+}
+
+.leaderboard-table tr.silver-medal td.col-rank {
+    color: #c0c0c0;
+}
+.leaderboard-table tr.silver-medal td.col-rank::before {
+    content: "🥈";
+    margin-left: 8px;
+}
+
+.leaderboard-table tr.bronze-medal td.col-name{
+    text-shadow: 0px 0px 20px #cd7f32;
+}
+
+.leaderboard-table tr.bronze-medal td.col-rank {
+    color: #cd7f32;
+}
+.leaderboard-table tr.bronze-medal td.col-rank::before {
+    content: "🥉";
+    margin-left: 8px;
+}
+
+@media (max-width: 1023px) {
+    .addr{
+        display: none;
+    }   
+    .leaderboaed{
+        width: 90%;
+        max-width: 90%;
+    }
+     
+}
