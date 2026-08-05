@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت کلاس | Game Admin</title>
+    <link rel="stylesheet" href="styles/admin.css">
+</head>
+<body>
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 id="modal-title">تایید عملیات</h3>
+            <p id="modal-message">آیا از انجام این کار اطمینان دارید؟</p>
+            <div class="modal-actions">
+                <button id="modal-cancel-btn" class="btn btn-secondary">انصراف</button>
+                <button id="modal-confirm-btn" class="btn btn-danger">بله، مطمئنم</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Section -->
+    <section id="login-section" class="full-screen-center">
+        <div class="card login-card">
+            <h2>ورود به پنل مدیریت</h2>
+            <p>لطفا نام کاربری و رمز عبور خود را وارد کنید.</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">نام کاربری</label>
+                    <input type="text" id="username" placeholder="admin" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">رمز عبور</label>
+                    <input type="password" id="password" placeholder="***" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100" id="login-btn">ورود</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Dashboard Section (Hidden by default) -->
+    <section id="dashboard-section" class="hidden">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-right">
+                <h1>داشبورد مدیریت کلاس</h1>
+            </div>
+            <div class="header-center">
+                <div class="game-timer">
+                    <span>زمان باقی‌مانده:</span>
+                    <span id="timer-display">00:00</span>
+                </div>
+            </div>
+            <div class="header-left">
+                <button id="logout-btn" class="btn btn-secondary btn-small">خروج</button>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- Top Row: Stats & Controls -->
+            <div class="top-row">
+                <!-- Statistics Card -->
+                <div class="card stats-card">
+                    <h3>آمار لحظه‌ای</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-value" id="stat-total">0</span>
+                            <span class="stat-label">کل دانش‌آموزان</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-value text-primary" id="stat-playing">0</span>
+                            <span class="stat-label">در حال بازی</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-value text-success" id="stat-finished">0</span>
+                            <span class="stat-label">تمام کرده‌اند</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Card -->
+                <div class="card settings-card">
+                    <h3>تنظیمات دیتابیس (پیش‌فرض‌ها)</h3>
+                    <div class="settings-form">
+                        <div class="input-group">
+                            <label for="game-time">زمان بازی (ثانیه):</label>
+                            <!-- Placeholder shows DB default -->
+                            <input type="number" id="game-time" placeholder="300">
+                            <button id="btn-save-game-time" class="btn btn-primary btn-small">ثبت</button>
+                        </div>
+                        <div class="input-group">
+                            <label for="hint-time">زمان نمایش راهنما (ثانیه):</label>
+                            <input type="number" id="hint-time" placeholder="30">
+                            <button id="btn-save-hint-time" class="btn btn-primary btn-small">ثبت</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Flow Controls -->
+            <div class="card controls-card">
+                <h3>کنترل جریان بازی</h3>
+                <div class="controls-flex">
+                    <button id="btn-start-game" class="btn btn-success">شروع بازی</button>
+                    <button id="btn-stop-game" class="btn btn-warning">توقف / پایان زودهنگام</button>
+                    <button id="btn-reset-game" class="btn btn-danger">ریست مسابقه</button>
+                    <button id="btn-download-excel" class="btn btn-info" disabled>دانلود اکسل نتایج</button>
+                </div>
+            </div>
+
+            <!-- Live Monitor Table -->
+            <div class="card monitor-card">
+                <h3>مانیتورینگ زنده دانش‌آموزان</h3>
+                <div class="table-responsive">
+                    <table class="monitor-table">
+                        <thead>
+                            <tr>
+                                <th>نام دانش‌آموز</th>
+                                <th>وضعیت</th>
+                                <th>پیشرفت (سوال)</th>
+                                <th>درصد دقت</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monitor-tbody">
+                            <!-- Rows will be injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
