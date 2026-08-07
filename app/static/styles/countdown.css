@@ -1,0 +1,86 @@
+/* تنظیمات اختصاصی صفحه تایمر */
+.timer-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #1a1a27; /* رنگ تیره هماهنگ با تخته سیاه پروژه */
+    color: #ffffff;
+    font-family: 'Vazirmatn', sans-serif;
+    overflow: hidden;
+    position: relative;
+}
+
+.page-title {
+    position: absolute;
+    top: 30px;
+    font-size: 80px;
+    font-weight: 900;
+    margin: 0;
+    text-shadow: 0px 0px 15px rgb(0, 0, 0);
+}
+
+.timer-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 600px;
+    height: 600px;
+}
+
+/* چرخاندن SVG برای اینکه نقطه شروع پر شدن از ساعت 12 باشد */
+.progress-ring {
+    transform: rotate(-90deg); 
+}
+
+.progress-ring__circle {
+    transition: stroke-dashoffset 1s linear, stroke 1s linear;
+    stroke-linecap: round;
+}
+
+.timer-text {
+    position: absolute;
+    font-size: 120px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    direction: ltr; /* برای نمایش صحیح اعداد به فرمت 00:00 */
+    transition: transform 0.1s ease;
+}
+
+.timer-text:active {
+    transform: scale(0.95);
+}
+
+/* تنظیمات دکمه‌های گوشه راست پایین */
+.controls-container {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 8px;
+}
+
+.control-btn {
+    background-color: #333344;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    background-color: #555577;
+    transform: scale(1.1);
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تایمر - کارت بازی</title>
+    <!-- اتصال به استایل‌های پایه پروژه -->
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/countdown.css">
+</head>
+<body class="timer-body">
+
+    <!-- عنوان صفحه -->
+    <h1 class="page-title">کارت بازی</h1>
+
+    <!-- بخش اصلی تایمر -->
+    <div class="timer-container">
+        <svg class="progress-ring" width="600" height="600">
+            <!-- دایره پس‌زمینه (خالی) -->
+            <circle class="progress-ring__background" stroke="#333" stroke-width="30" fill="transparent" r="200" cx="300" cy="300"/>
+            <!-- دایره رنگی پیشرفت -->
+            <circle class="progress-ring__circle" stroke="#28a745" stroke-width="30" fill="transparent" r="200" cx="300" cy="300"/>
+        </svg>
+        
+        <!-- عدد تایمر -->
+        <div class="timer-text" id="time-display" title="برای تغییر زمان کلیک کنید">00:30</div>
+    </div>
+
+    <!-- دکمه‌های کنترلی کوچک گوشه راست پایین -->
+    <div class="controls-container">
+        <button id="toggle-btn" class="control-btn" title="شروع / توقف">▶</button>
+        <button id="reset-btn" class="control-btn" title="ریست">↻</button>
+    </div>
+
+    <!-- افکت صدای پایان تایمر -->
+    <audio id="alarm-sound" src="sounds/timeup.mp3"></audio>
+
+    <script src="js/countdown.js"></script>
+</body>
+</html>
