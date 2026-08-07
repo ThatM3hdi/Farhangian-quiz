@@ -52,6 +52,49 @@ body{
     align-items: center;
 }
 
+/* ساعت شنی + زمان باقی‌مانده روی صفحه نمایشگر کلاس */
+.addr .timer-badge {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.addr .timer-badge[hidden] {
+    display: none;
+}
+
+.addr .timer-badge .hourglass-icon {
+    font-size: 120px;
+    line-height: 1.2;
+    animation: hourglass-spin 5s linear infinite;
+}
+
+.addr .timer-badge #timer-text {
+    font-size: 48px;
+    letter-spacing: 1px;
+}
+
+.addr .timer-badge.timer-warning #timer-text {
+    color: #ff5252;
+}
+
+@keyframes hourglass-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .addr .timer-badge .hourglass-icon {
+        animation: none;
+    }
+}
+
 .leaderboaed{
     display: flex;
     flex-direction: column;
@@ -188,5 +231,4 @@ body{
         width: 90%;
         max-width: 90%;
     }
-     
 }
