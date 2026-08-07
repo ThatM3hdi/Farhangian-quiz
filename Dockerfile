@@ -12,6 +12,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY ./app /code/app
 COPY ./tests /code/tests
 
+RUN chmod -R 755 /code
+
 EXPOSE 81
 
 CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-81}"]
