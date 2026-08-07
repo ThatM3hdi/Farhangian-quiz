@@ -3,6 +3,7 @@ import json
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from app.routers import admin, lobby, game, leaderboard
 from app import database, models
@@ -46,12 +47,33 @@ async def lifespan(app: FastAPI):
 # Define the application and attach the lifespan to it
 app = FastAPI(title="Class Quiz Game", lifespan=lifespan)
 
+# ========== Health Check ==========
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "service": "quiz-game"}
+# =============================================
+
 # Importing modules (routes)
 # The /api prefix ensures that they do not interfere with frontend files
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 app.include_router(lobby.router, prefix="/api/lobby", tags=["Lobby"])
 app.include_router(game.router, prefix="/api/game", tags=["Game"])
 app.include_router(leaderboard.router, prefix="/api/leaderboard", tags=["Leaderboard"])
+
+PAGE_FILES = {
+    "/admin": "admin.html",
+    "/lobby": "lobby.html",
+    "/game": "game.html",
+    "/countdown": "countdown.html",
+}
+
+def _serve_page(filename: str):
+    async def _handler():
+        return FileResponse(os.path.join(STATIC_DIR, filename))
+    return _handler
+
+for route_path, filename in PAGE_FILES.items():
+    app.add_api_route(route_path, _serve_page(filename), include_in_schema=False)
 
 # Serving static frontend files (must be the last line)
 app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")

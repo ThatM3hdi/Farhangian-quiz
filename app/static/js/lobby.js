@@ -80,7 +80,7 @@
       updateCountdownDisplay(secondsLeft, totalSeconds);
       if (secondsLeft <= 0) {
         clearInterval(countdownTimerId);
-        window.location.href = 'game.html';
+        window.location.href = 'game';
       }
     }, 1000);
   }
