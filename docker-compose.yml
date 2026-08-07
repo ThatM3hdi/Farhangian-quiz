@@ -2,13 +2,12 @@ services:
   backend:
     build: .
     container_name: quiz_game_backend
+    restart: always
     ports:
-      - "8081:81"
-    volumes:
-      - ./app:/code/app
-      - ./tests:/code/tests
+      - "127.0.0.1:8081:81"
     environment:
       - TZ=Asia/Tehran
       - ADMIN_USERNAME=${ADMIN_USERNAME:-admin_username}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin_password}
-    command: uvicorn app.main:app --host 0.0.0.0 --port 81 --reload
+    # command پاک شد تا از دستور پیش‌فرض Dockerfile استفاده شود
+    # volumes پاک شد تا کانتینر از کدهای کپی شده داخل ایمیج استفاده کند
