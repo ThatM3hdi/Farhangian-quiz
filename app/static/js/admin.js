@@ -195,7 +195,7 @@ function renderMonitorTable(students) {
     monitorTbody.innerHTML = '';
     if (!students || students.length === 0) {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td colspan="4" style="text-align:center; color:var(--text-muted);">هیچ دانش‌آموزی ثبت‌نام نکرده است</td>`;
+        tr.innerHTML = `<td colspan="4" style="text-align:center; color:var(--text-muted);">هیچ دانشجویی ثبت‌نام نکرده است</td>`;
         monitorTbody.appendChild(tr);
         return;
     }
@@ -318,7 +318,7 @@ btnStart.addEventListener('click', async () => {
 btnStop.addEventListener('click', () => {
     openModal(
         'توقف زودهنگام بازی',
-        'آیا مطمئن هستید که می‌خواهید بازی را متوقف کنید؟ تمام دانش‌آموزان به لیدربرد منتقل می‌شوند.',
+        'آیا مطمئن هستید که می‌خواهید بازی را متوقف کنید؟ تمام دانشجوان به لیدربرد منتقل می‌شوند.',
         async () => {
             setButtonLoading(btnStop, true);
             try {
@@ -345,7 +345,7 @@ btnStop.addEventListener('click', () => {
 btnReset.addEventListener('click', () => {
     openModal(
         'ریست کامل بازی',
-        'هشدار: تمام دانش‌آموزان و پاسخ‌ها پاک خواهند شد. آیا ادامه می‌دهید؟',
+        'هشدار: تمام دانشجوان و پاسخ‌ها پاک خواهند شد. آیا ادامه می‌دهید؟',
         async () => {
             setButtonLoading(btnReset, true);
             try {

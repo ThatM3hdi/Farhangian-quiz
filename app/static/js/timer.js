@@ -51,7 +51,7 @@
     function syncTimeRemaining() {
       fetch('/api/game/time-remaining', { credentials: 'same-origin' })
         .then(function (response) {
-          // این صفحه روی نمایشگر کلاس بازه، نه سشن یک دانش‌آموز؛ پس اگر
+          // این صفحه روی نمایشگر کلاس بازه، نه سشن یک دانشجو؛ پس اگر
           // بازی هنوز شروع نشده یا سشن معتبری نیست، فقط ساعت شنی رو
           // مخفی می‌کنیم، بدون هیچ ریدایرکتی.
           return response.ok ? response.json() : null;
