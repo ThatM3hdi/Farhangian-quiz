@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -64,3 +64,33 @@ def get_leaderboard(db: Session = Depends(database.get_db)):
         )
 
     return schemas.LeaderboardOut(students=entries)
+
+@router.post("/register", response_model=schemas.StudentOut)
+def register_student(
+    student: schemas.StudentCreate,
+    request: Request,
+    response: Response,
+    db: Session = Depends(database.get_db),
+):
+    name = student.name.strip()
+    if not name:
+        logger.warning("Registration rejected: empty name submitted")
+        raise HTTPException(status_code=400, detail="نام نمی‌تواند خالی باشد")
+
+    # X-Forwarded-For first, since ParsPack's reverse proxy sits in front of you —
+    # request.client.host alone would just be the proxy's own IP otherwise.
+    forwarded = request.headers.get("x-forwarded-for")
+    ip_address = forwarded.split(",")[0].strip() if forwarded else (
+        request.client.host if request.client else None
+    )
+    device_info = request.headers.get("user-agent")
+
+    token = secrets.token_urlsafe(32)
+    db_student = models.Student(
+        name=name,
+        session_token=token,
+        score=0,
+        ip_address=ip_address,
+        device_info=device_info,
+    )
+    db.add(db_student)

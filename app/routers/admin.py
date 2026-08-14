@@ -227,16 +227,15 @@ def export_results_excel(
     results_sheet = workbook.active
     results_sheet.title = "نتایج"
     results_sheet.sheet_view.rightToLeft = True
-    results_sheet.append(["رتبه", "نام دانش‌آموز", "امتیاز", "زمان ورود به لابی"])
+    results_sheet.append(["رتبه", "نام دانش‌آموز", "امتیاز", "زمان ورود به لابی", "آی‌پی", "دستگاه"])
     for cell in results_sheet[1]:
         cell.font = header_font
 
     for rank, student in enumerate(students, start=1):
         results_sheet.append([
-            rank,
-            student.name,
-            student.score,
+            rank, student.name, student.score,
             student.created_at.strftime("%Y-%m-%d %H:%M:%S") if student.created_at else "",
+            student.ip_address or "", student.device_info or "",
         ])
 
     detail_sheet = workbook.create_sheet(title="پاسخ به تفکیک سوال")
@@ -278,3 +277,8 @@ def export_results_excel(
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={"Content-Disposition": "attachment; filename=quiz-results.xlsx"},
     )
+
+@router.get("/waiting-list", response_model=schemas.StudentAdminListOut)
+def get_waiting_list(...):
+    students = db.query(models.Student).order_by(models.Student.created_at.asc()).all()
+    return schemas.StudentAdminListOut(count=len(students), students=students)

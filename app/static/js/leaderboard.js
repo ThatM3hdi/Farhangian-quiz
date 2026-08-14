@@ -56,7 +56,7 @@
     tbody.innerHTML = '';
 
     if (!students.length) {
-      tbody.appendChild(buildStatusRow('هنوز دانشجویی وارد بازی نشده است'));
+      tbody.appendChild(buildStatusRow('هنوز دانشجویی وارد بازی نشده است.'));
       return;
     }
 

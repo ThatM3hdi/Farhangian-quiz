@@ -22,6 +22,8 @@ class Student(Base):
     session_token = Column(String, unique=True, index=True, nullable=False)
     score = Column(Integer, default=0)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    ip_address = Column(String, nullable=True)
+    device_info = Column(String, nullable=True)  # User-Agent + optional screen size, for tracing inappropriate names
     answers = relationship("StudentAnswer", back_populates="student")
 
 

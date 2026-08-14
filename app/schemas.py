@@ -20,6 +20,15 @@ class StudentOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+class StudentAdminOut(StudentOut):
+    """Admin-only student view — includes tracing info, never sent to students."""
+    ip_address: Optional[str] = None
+    device_info: Optional[str] = None
+
+
+class StudentAdminListOut(BaseModel):
+    count: int
+    students: List[StudentAdminOut]
 
 # ==========================================
 # 2. Question Schemas
