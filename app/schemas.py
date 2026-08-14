@@ -145,12 +145,6 @@ class AdminLogin(BaseModel):
     password: str
 
 
-class StudentListOut(BaseModel):
-    """Output for admin views that list registered students (e.g. the lobby waiting list)."""
-    count: int
-    students: List[StudentOut]
-
-
 class GameSettingsOut(BaseModel):
     """Output model for the current game timing settings, shown in the admin panel."""
     game_time: int

@@ -1,7 +1,7 @@
 import logging
 import secrets
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, Request
 from sqlalchemy.orm import Session
 
 from app import database, models, schemas
@@ -17,21 +17,23 @@ SESSION_COOKIE_MAX_AGE = 60 * 60 * 12
 @router.post("/register", response_model=schemas.StudentOut)
 def register_student(
     student: schemas.StudentCreate,
+    request: Request,
     response: Response,
     db: Session = Depends(database.get_db),
 ):
-    """
-    Registers a new student in the lobby and sets their session_token as an
-    HttpOnly cookie. Identity for every later request (answers, etc.) must be
-    resolved from this cookie server-side — never from a client-supplied id.
-    """
     name = student.name.strip()
     if not name:
         logger.warning("Registration rejected: empty name submitted")
         raise HTTPException(status_code=400, detail="نام نمی‌تواند خالی باشد")
 
+    forwarded = request.headers.get("x-forwarded-for")
+    ip_address = forwarded.split(",")[0].strip() if forwarded else (
+        request.client.host if request.client else None
+    )
+    device_info = request.headers.get("user-agent")
+
     token = secrets.token_urlsafe(32)
-    db_student = models.Student(name=name, session_token=token, score=0)
+    db_student = models.Student(name=name, session_token=token, score=0, ip_address=ip_address, device_info=device_info)
     db.add(db_student)
 
     try:
@@ -98,3 +100,4 @@ def get_public_settings(db: Session = Depends(database.get_db)):
     if settings is None:
         raise HTTPException(status_code=500, detail="تنظیمات بازی تعریف نشده است")
     return settings
+    

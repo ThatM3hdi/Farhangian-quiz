@@ -80,7 +80,7 @@ def admin_login(credentials: schemas.AdminLogin, response: Response):
 # Lobby waiting list
 # ==========================================
 
-@router.get("/waiting-list", response_model=schemas.StudentListOut)
+@router.get("/waiting-list", response_model=schemas.StudentAdminListOut)
 def get_waiting_list(
     db: Session = Depends(database.get_db),
     _: None = Depends(get_current_admin),
@@ -89,8 +89,7 @@ def get_waiting_list(
     students = (
         db.query(models.Student).order_by(models.Student.created_at.asc()).all()
     )
-    return schemas.StudentListOut(count=len(students), students=students)
-
+    return schemas.StudentAdminListOut(count=len(students), students=students)
 
 # ==========================================
 # Game state control
@@ -277,8 +276,3 @@ def export_results_excel(
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={"Content-Disposition": "attachment; filename=quiz-results.xlsx"},
     )
-
-@router.get("/waiting-list", response_model=schemas.StudentAdminListOut)
-def get_waiting_list(...):
-    students = db.query(models.Student).order_by(models.Student.created_at.asc()).all()
-    return schemas.StudentAdminListOut(count=len(students), students=students)
